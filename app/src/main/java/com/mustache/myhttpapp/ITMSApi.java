@@ -13,7 +13,7 @@ public interface ITMSApi {
 
     @FormUrlEncoded
     @POST("upload")
-    Call<UploadResult> upload(@Field("request") String request, @Field("accessToken") String
+    Call<UploadResult> upload(@Field("request") UploadReq request, @Field("accessToken") String
             accessToken);
 
     @FormUrlEncoded

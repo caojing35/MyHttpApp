@@ -98,9 +98,11 @@ public class MainActivity extends AppCompatActivity {
         tmsupload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TMSServer.api.upload("{agreetype=1, " +
-                                "version=20170910}",
-                        "IJO!OIJDI@!OIJOIJD+/d1").enqueue(new retrofit2.Callback<UploadResult>() {
+                UploadReq req = new UploadReq();
+                req.setId("1");
+                req.setVersion("20170910");
+                TMSServer.api.upload(req, "IJO!OIJDI@!OIJOIJD+/d1").enqueue(new
+                                                                                   retrofit2.Callback<UploadResult>() {
                     @Override
                     public void onResponse(retrofit2.Call<UploadResult> call, retrofit2.Response<UploadResult> response) {
                         Log.i(TAG, "upload.onResponse:" + response.body());
