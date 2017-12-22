@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        TMSServer.init();
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -91,6 +93,47 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         });
+
+        Button tmsupload = findViewById(R.id.tmsupload);
+        tmsupload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TMSServer.api.upload("{agreetype=1, " +
+                                "version=20170910}",
+                        "IJO!OIJDI@!OIJOIJD+/d1").enqueue(new retrofit2.Callback<UploadResult>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<UploadResult> call, retrofit2.Response<UploadResult> response) {
+                        Log.i(TAG, "upload.onResponse:" + response.body());
+                    }
+
+                    @Override
+                    public void onFailure(retrofit2.Call<UploadResult> call, Throwable t) {
+                        Log.i(TAG, "upload.onFailure:" + t.getMessage());
+
+                    }
+                });
+
+            }
+        });
+
+        Button tmsquery = findViewById(R.id.tmsquery);
+        tmsquery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TMSServer.api.query("IJO!OIJDI@!OIJOIJD+/d1").enqueue(new retrofit2.Callback<AgreeResult>() {
+                    @Override
+                    public void onResponse(retrofit2.Call<AgreeResult> call, retrofit2.Response<AgreeResult> response) {
+                        Log.i(TAG, "query.onResponse:" + response.body());
+                    }
+
+                    @Override
+                    public void onFailure(retrofit2.Call<AgreeResult> call, Throwable t) {
+                        Log.i(TAG, "query.onFailure:" + t.getMessage());
+
+                    }
+                });
+            }
+        });
     }
 
     /**
@@ -115,10 +158,7 @@ public class MainActivity extends AppCompatActivity {
             Headers bodyHeader = resetContentLength(originalResponse.headers(), newResponseBytes.length);
             return originalResponse.newBuilder().removeHeader("pragma")
                     .header("Cache-Control", "max-age=10")//设置10秒
-                    .header("Cache-Control", "max-stale=30")
-                    .headers(bodyHeader)
-                    .body(new RealResponseBody
-                    (bodyHeader, Okio.buffer(Okio.source(origBytes)))).build();
+                    .header("Cache-Control", "max-stale=30").build();
         }
     }
 
@@ -163,9 +203,7 @@ public class MainActivity extends AppCompatActivity {
             Headers newHeaders = headers.newBuilder().set("Content-Length", newContentLength)
                     .build();
 
-            Response response = builder.body(new RealResponseBody
-                    (newHeaders, Okio.buffer(Okio.source(origBytes))))
-                    .header("Content-Length", newContentLength).build();
+            Response response = builder.header("Content-Length", newContentLength).build();
             return response;
         }
     }
